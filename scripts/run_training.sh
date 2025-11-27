@@ -8,10 +8,9 @@
 # this script is intended to be run from the project root
 export OMP_NUM_THREADS=20
 
-dataset="mimic_ed"
 dataset_name="mimic"
 
-data_path=data/tokenized_datasets/$dataset
+data_path="/cosybio_project/lohmann/MIMIC-IV-3_1/tokenized"
 clear
 if [[ ! -d $data_path ]]; then
     echo "Dataset directory not found: $data_path"
@@ -21,13 +20,19 @@ fi
 shift 1
 
 BATCH_SIZE=32
-N_POSITIONS=2048
-N_LAYER=6
+N_POSITIONS=128 #2048
+N_LAYER=1 #6
 N_HEAD=12
 N_EMBD=768
 DROPOUT=0.3
 LR=0.0006
 MIN_LR=0.00001
+LOG_INTERVAL=10
+EVAL_INTERVAL=1500
+GRADIENT_ACCUMULATION_STEPS=16
+WARMUP_ITERS=5 #000
+MAX_ITERS=20 #0000
+LR_DECAY_ITERS=10 #0000
 
 model_name="layer_${N_LAYER}_do_${DROPOUT}"
 
@@ -61,13 +66,13 @@ torchrun --no_python --standalone --nproc_per_node=\${NUM_GPUS} ethos_train \
   dropout=$DROPOUT \
   lr=$LR \
   min_lr=$MIN_LR \
-  log_interval=10 \
-  eval_interval=1500 \
-  gradient_accumulation_steps=16 \
-  warmup_iters=5000 \
-  max_iters=200000 \
-  lr_decay_iters=100000 \
-  wandb_log=true \
+  log_interval=$LOG_INTERVAL \
+  eval_interval=$EVAL_INTERVAL \
+  gradient_accumulation_steps=$GRADIENT_ACCUMULATION_STEPS \
+  warmup_iters=$WARMUP_ITERS \
+  max_iters=$MAX_ITERS \
+  lr_decay_iters=$LR_DECAY_ITERS \
+  wandb_log=false \
   wandb_project="ethos-meds-$dataset_name" \
   wandb_run_name=$model_name \
   $* \

@@ -10,8 +10,8 @@ if [[ -n "$suffix" && ! "$suffix" =~ ^[-_] ]]; then
     suffix="-$suffix"
 fi
 
-input_dir="data/mimic-2.2-meds${suffix//_/-}/data"
-output_dir="data/tokenized_datasets/mimic${suffix//-/_}"
+input_dir="/cosybio_project/lohmann/MIMIC-IV-3_1/meds/data"
+output_dir="/cosybio_project/lohmann/MIMIC-IV-3_1/tokenized"
 
 singularity_preamble="
 export PATH=\$HOME/.local/bin:\$PATH
